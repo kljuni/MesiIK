@@ -18,31 +18,46 @@ namespace MesiIK.Services
                 throw new InvalidOperationException("Server is already running.");
             }
 
-            listener = new HttpListener();
-            cts = new CancellationTokenSource();
-
-            listener.Prefixes.Add($"http://{address}:{port}/");
-            listener.Start();
-
-            Task.Run(async () =>
+            try
             {
-                while (!cts.Token.IsCancellationRequested)
+                listener = new HttpListener();
+                cts = new CancellationTokenSource();
+
+                listener.Prefixes.Add($"http://{address}:{port}/");
+                listener.Start();
+
+                Task.Run(async () =>
                 {
-                    try
+                    while (!cts.Token.IsCancellationRequested)
                     {
-                        var context = await listener.GetContextAsync().WithCancellation(cts.Token);
-                        _ = ProcessRequestAsync(context);
+                        try
+                        {
+                            var context = await listener.GetContextAsync().WithCancellation(cts.Token);
+                            _ = ProcessRequestAsync(context);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error accepting request: {ex.Message}");
+                        }
                     }
-                    catch (OperationCanceledException)
-                    {
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error accepting request: {ex.Message}");
-                    }
-                }
-            }, cts.Token);
+                }, cts.Token);
+            }
+            catch (HttpListenerException ex) when (ex.ErrorCode == 48 || ex.ErrorCode == 183)
+            {
+                listener = null;
+                cts = null;
+                throw new InvalidOperationException($"Port {port} is already in use.", ex);
+            }
+            catch (Exception)
+            {
+                listener = null;
+                cts = null;
+                throw;
+            }
         }
 
         private async Task ProcessRequestAsync(HttpListenerContext context)

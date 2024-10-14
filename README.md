@@ -4,8 +4,8 @@ MesiIK is a desktop application built with Avalonia UI that provides a HTTP serv
 
 - Configurable server inbound and client outbound addresses and ports
 - Draggable configuration items
-- Send custom HTTP requests with headers
-- View received messages
+- Send POST HTTP requests with optional headers
+- View received requests
 - Save and load settings
 
 ## Requirements
@@ -39,8 +39,8 @@ dotnet run --project src/MesiIK.csproj
 2. Configure the server and client settings using the draggable text boxes on the canvas.
 3. Click the \"Start\" button to start the server.
 4. Enter a message body and optional HTTP headers in the provided text boxes.
-5. Click the \"Send\" button to send a request.
-6. View the received messages in the text box on the right side of the window.
+5. Click the \"Send\" button to send a POST request.
+6. View the received requests in the text box on the right side of the window.
 
 ## Configuration
 
@@ -55,12 +55,7 @@ These settings can be dragged around the canvas for easy organization.
 
 ## HTTP Server
 
-The built-in HTTP server accepts both JSON and plain text requests:
-
-- For JSON requests, set the Content-Type header to "application/json". The server will parse the JSON and include it in the response.
-- For plain text requests, the server will echo back the received content with a timestamp.
-
-In both cases, the server responds with the received data and a timestamp.
+- For all requests, the server will echo back the received content with a timestamp.
 
 ## Saving and Loading Settings
 
