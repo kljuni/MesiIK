@@ -1,0 +1,10 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MesiIK.Controls.MessageBox">
+    <Border Padding="10" IsVisible="False" x:Name="MessageBoxBorder">
+        <Grid>
+            <TextBlock x:Name="MessageText" FontSize="14" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" FontWeight="Bold" Click="CloseMessageBox_Click"/>
+        </Grid>
+    </Border>
+</UserControl>

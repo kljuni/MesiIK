@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="MesiIK.Views.MainWindow"
+        xmlns:controls="clr-namespace:MesiIK.Controls"
+        Title="MesiIK - HTTP Server/Client App" Width="800" Height="600">
+    <Window.Styles>
+        <Style Selector="Button.enabled">
+            <Setter Property="Opacity" Value="1"/>
+            <Setter Property="IsHitTestVisible" Value="True"/>
+        </Style>
+        <Style Selector="Button.disabled">
+            <Setter Property="Opacity" Value="0.5"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+        </Style>
+    </Window.Styles>
+    <Grid RowDefinitions="Auto,*,Auto">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+            <Button x:Name="StartButton" Content="Start" Click="Start_Click"/>
+            <Button x:Name="StopButton" Content="Stop" Click="Stop_Click" Margin="10,0,0,0"/>
+            <Button Content="Save Settings" Click="SaveSettings_Click" Margin="10,0,0,0"/>
+            <Button Content="Reset to Defaults" Click="ResetToDefaults_Click" Margin="10,0,0,0"/>
+        </StackPanel>
+        
+        <controls:MessageBox x:Name="MessageBox" Grid.Row="0"/>
+        
+        <Canvas Grid.Row="1" x:Name="ConfigCanvas" Background="LightGray">
+            <!-- Draggable elements will be added here programmatically -->
+        </Canvas>
+        
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" Margin="0,0,0,10">
+            <StackPanel Grid.Column="0" Margin="10, 0, 10, 0">
+                <TextBlock Text="Message Body" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox x:Name="MessageBody" AcceptsReturn="True" TextWrapping="Wrap" Watermark="Message Body" Height="100" Margin="0,0,0,10"/>
+
+                <TextBlock Text="HTTP Headers" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox x:Name="HttpHeaders"
+                         Watermark="Content-Type: application/json&#x0a;Authorization: Bearer abc123"
+                         ToolTip.Tip="Enter headers in 'Key: Value' format, one per line."
+                         Height="50" AcceptsReturn="True" Margin="0,0,0,10"/>
+
+                <Button Content="Send" Click="Send_Click"/>
+            </StackPanel>
+
+        <Grid Grid.Column="1" Margin="0,0,10,0">
+                <TextBox x:Name="ReceivedMessages" 
+                        IsReadOnly="True" 
+                        TextWrapping="Wrap" 
+                        MaxHeight="200" 
+                        MinHeight="100"/>
+        </Grid>
+
+        </Grid>
+    </Grid>
+</Window>
