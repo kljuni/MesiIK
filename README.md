@@ -22,7 +22,7 @@ MesiIK is a desktop application built with Avalonia UI that provides a HTTP serv
 
 2. Build the project:
    ```
-   dotnet build
+   dotnet build src/MesiIK.csproj
    ```
 
 ## Running the Application

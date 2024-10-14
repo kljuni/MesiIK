@@ -5,6 +5,7 @@ using MesiIK.Controls;
 using MesiIK.Services;
 using System;
 using System.IO;
+using Avalonia.Threading;
 
 namespace MesiIK.Views
 {
@@ -39,6 +40,8 @@ namespace MesiIK.Views
             var httpClient = new MesiHttpClient();
             _serverManager = new ServerManager(httpServer, httpClient, _messageBox);
             _messageHandler = new MessageHandler(httpClient, _messageBox);
+
+            httpServer.RequestReceived += OnRequestReceived;
 
             UpdateButtonStates();
         }
@@ -80,7 +83,11 @@ namespace MesiIK.Views
             var (success, response) = await _messageHandler.SendMessage(messageBody, headers);
             if (success)
             {
-                _receivedMessagesTextBox.Text += $"{response}\n";
+                _messageBox.ShowMessage("Message sent successfully", MessageType.Success, TimeSpan.FromSeconds(3));
+            }
+            else
+            {
+                _messageBox.ShowMessage($"Failed to send message: {response}", MessageType.Error, TimeSpan.FromSeconds(5));
             }
         }
 
@@ -110,6 +117,14 @@ namespace MesiIK.Views
 
             _stopButton.Classes.Clear();
             _stopButton.Classes.Add(_serverManager.IsServerRunning ? "enabled" : "disabled");
+        }
+
+        private async void OnRequestReceived(string requestInfo)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _receivedMessagesTextBox.Text += $"{requestInfo}\n";
+            });
         }
     }
 }

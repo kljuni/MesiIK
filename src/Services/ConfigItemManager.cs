@@ -125,15 +125,36 @@ namespace MesiIK.Services
         {
             if (File.Exists("settings.json"))
             {
-                var settings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(File.ReadAllText("settings.json"));
-                foreach (var item in configItems)
+                try
                 {
-                    if (settings.TryGetValue(item.Label ?? string.Empty, out var value))
+                    var settingsJson = File.ReadAllText("settings.json");
+                    var settings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(settingsJson);
+                    
+                    if (settings != null)
                     {
-                        item.Text = value.GetProperty("Text").GetString() ?? string.Empty;
-                        Canvas.SetLeft(item, value.GetProperty("X").GetDouble());
-                        Canvas.SetTop(item, value.GetProperty("Y").GetDouble());
+                        foreach (var item in configItems)
+                        {
+                            string key = item.Label ?? string.Empty;
+                            if (settings.TryGetValue(key, out var value))
+                            {
+                                item.Text = value.GetProperty("Text").GetString() ?? string.Empty;
+                                Canvas.SetLeft(item, value.GetProperty("X").GetDouble());
+                                Canvas.SetTop(item, value.GetProperty("Y").GetDouble());
+                            }
+                        }
                     }
+                    else
+                    {
+                        _messageBox.ShowMessage("Failed to load settings: Settings file is empty or invalid.", MessageType.Error);
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    _messageBox.ShowMessage($"Failed to load settings: {ex.Message}", MessageType.Error);
+                }
+                catch (IOException ex)
+                {
+                    _messageBox.ShowMessage($"Failed to read settings file: {ex.Message}", MessageType.Error);
                 }
             }
         }
